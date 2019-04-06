@@ -53,7 +53,7 @@ class TodoScreenState extends State {
 
     List current_screen = [
       countTodo == 0
-          ? Text("No data found..")
+          ? Text("No data found..", style: TextStyle(fontSize: 20),)
           : ListView.builder(
               itemCount: countTodo,
               itemBuilder: (context, int position) {
@@ -83,7 +83,7 @@ class TodoScreenState extends State {
               },
             ),
       countDone == 0
-          ? Text("No data found..")
+          ? Text("No data found..", style: TextStyle(fontSize: 20),)
           : ListView.builder(
               itemCount: countDone,
               itemBuilder: (context, int position) {
