@@ -1,9 +1,9 @@
 import 'package:sqflite/sqflite.dart';
 
 final String tableTodo = "todo";
-final String Id = "_id";
-final String Title = "Title";
-final String Done = "done";
+final String _Id = "id";
+final String _Title = "title";
+final String _Done = "done";
 
 class Todo {
   int _id;
@@ -12,11 +12,11 @@ class Todo {
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      Title: title,
-      Done: done,
+      _Title: title,
+      _Done: done,
     };
     if (_id != null) {
-      map[Id] = _id;
+      map[_Id] = _id;
     }
     return map;
   }
@@ -24,9 +24,9 @@ class Todo {
   Todo();
 
   Todo.formMap(Map<String, dynamic> map) {
-    this._id = map[Id];
-    this.title = map[Title];
-    this.done = map[Done] == 1;
+    this._id = map[_Id];
+    this.title = map[_Title];
+    this.done = map[_Done] == 1;
   }
 }
 
@@ -38,9 +38,9 @@ class TodoProvider {
         onCreate: (Database db, int version) async {
       await db.execute('''
       create table $tableTodo (
-        $Id integer primary key autoincrement,
-        $Title text not null,
-        $Done integer not null
+        $_Id integer primary key autoincrement,
+        $_Title text not null,
+        $_Done integer not null
       )
       ''');
     });
@@ -54,7 +54,7 @@ class TodoProvider {
 
   Future<Todo> getTodo(int id) async {
     List<Map> maps = await db.query(tableTodo,
-        columns: [Id, Title, Done], where: '$Id = ?', whereArgs: [id]);
+        columns: [_Id, _Title, _Done], where: '$_Id = ?', whereArgs: [id]);
     if (maps.length > 0) {
       return new Todo.formMap(maps.first);
     }
@@ -62,28 +62,28 @@ class TodoProvider {
   }
 
   Future<int> delete(int id) async {
-    return await db.delete(tableTodo, where: '$Id = ?', whereArgs: [id]);
+    return await db.delete(tableTodo, where: '$_Id = ?', whereArgs: [id]);
   }
 
   Future<int> update(Todo todo) async {
     print("Set State Done 0 or 1");
     return await db.update(tableTodo, todo.toMap(),
-        where: '$Id = ?', whereArgs: [todo._id]);
+        where: '$_Id = ?', whereArgs: [todo._id]);
   }
 
   Future<List<Todo>> getAllListTodo() async {
-    var todo = await db.query(tableTodo, where: '$Done = 0');
+    var todo = await db.query(tableTodo, where: '$_Done = 0');
 
     return todo.map((f) => Todo.formMap(f)).toList();
   }
 
   Future<List<Todo>> getAllListDoneTodo() async {
-    var todo = await db.query(tableTodo, where: '$Done = 1');
+    var todo = await db.query(tableTodo, where: '$_Done = 1');
     return todo.map((f) => Todo.formMap(f)).toList();
   }
 
   Future<void> deleteAllDoneTodo() async {
     print('Delete Done list');
-    await db.delete(tableTodo, where: '$Done = 1');
+    await db.delete(tableTodo, where: '$_Done = 1');
   }
 }
