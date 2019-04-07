@@ -10,26 +10,27 @@ class TodoScreen extends StatefulWidget {
 }
 
 class TodoScreenState extends State {
-  int _current_state = 0;
-  int countTodo = 0;
-  int countDone = 0;
+  
+  int _currentState = 0 ;
+  int _countList = 0 ;
+  int _countListDone = 0 ;
   List<Todo> listTodo;
-  List<Todo> listTodoDone;
+  List<Todo> listDone;
 
   TodoProvider db = TodoProvider();
   @override
   void getTodoLists() async {
     await db.open("todo.db");
-    db.getAllTodos().then((listTodo) {
+    db.getAllListTodo().then((listTodo) {
       setState(() {
         this.listTodo = listTodo;
-        this.countTodo = listTodo.length;
+        this._countList = listTodo.length;
       });
     });
-    db.getAllDoneTodos().then((listTodoDone) {
+    db.getAllListDoneTodo().then((listDone) {
       setState(() {
-        this.listTodoDone = listTodoDone;
-        this.countDone = listTodoDone.length;
+        this.listDone = listDone;
+        this._countListDone = listDone.length;
       });
     });
   }
@@ -52,10 +53,10 @@ class TodoScreenState extends State {
     ];
 
     List current_screen = [
-      countTodo == 0
+      _countList == 0
           ? Text("No data found..", style: TextStyle(fontSize: 20),)
           : ListView.builder(
-              itemCount: countTodo,
+              itemCount: _countList,
               itemBuilder: (context, int position) {
                 return Column(
                   children: <Widget>[
@@ -64,7 +65,7 @@ class TodoScreenState extends State {
                     ),
                     ListTile(
                       title: Text(
-                        this.listTodo[position].subject,
+                        this.listTodo[position].title,
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -82,10 +83,10 @@ class TodoScreenState extends State {
                 );
               },
             ),
-      countDone == 0
+      _countListDone == 0
           ? Text("No data found..", style: TextStyle(fontSize: 20),)
           : ListView.builder(
-              itemCount: countDone,
+              itemCount: _countListDone,
               itemBuilder: (context, int position) {
                 return Column(
                   children: <Widget>[
@@ -94,7 +95,7 @@ class TodoScreenState extends State {
                     ),
                     ListTile(
                       title: Text(
-                        this.listTodoDone[position].subject,
+                        this.listDone[position].title,
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -102,11 +103,11 @@ class TodoScreenState extends State {
                       trailing: Checkbox(
                           onChanged: (bool value) {
                             setState(() {
-                              listTodoDone[position].done = value;
+                              listDone[position].done = value;
                             });
-                            db.update(listTodoDone[position]);
+                            db.update(listDone[position]);
                           },
-                          value: listTodoDone[position].done),
+                          value: listDone[position].done),
                     )
                   ],
                 );
@@ -120,23 +121,23 @@ class TodoScreenState extends State {
         appBar: AppBar(
           title: Text("Todo"),
           actions: <Widget>[
-            _current_state == 0 ? current_tab[0] : current_tab[1]
+            _currentState == 0 ? current_tab[0] : current_tab[1]
           ],
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.pink,
         ),
         body: Center(
-            child: _current_state == 0 ? current_screen[0] : current_screen[1]),
+            child: _currentState == 0 ? current_screen[0] : current_screen[1]),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _current_state,
+          currentIndex: _currentState,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.list), title: Text('Task')),
+                icon: Icon(Icons.list), title: Text('Task'),),
             BottomNavigationBarItem(
                 icon: Icon(Icons.done_all), title: Text('Complete'))
           ],
           onTap: (int index) {
             setState(() {
-              _current_state = index;
+              _currentState = index;
             });
           },
         ),

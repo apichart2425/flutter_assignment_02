@@ -9,8 +9,8 @@ class AddSrceen extends StatefulWidget {
 }
 
 class AddlistSrceen extends State<AddSrceen> {
-  final _formkey = GlobalKey<FormState>();
-  TextEditingController subjectTodo = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController TitleTodo = TextEditingController();
   TodoProvider db = TodoProvider();
 
   @override
@@ -22,14 +22,15 @@ class AddlistSrceen extends State<AddSrceen> {
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Form(
-          key: _formkey,
+          key: _formKey,
           child: ListView(
             children: <Widget>[
               TextFormField(
-                controller: subjectTodo,
+                controller: TitleTodo,
                 decoration: InputDecoration(labelText: 'Subject'),
                 validator: (value) {
                   if (value.isEmpty) {
+                    print("isEmtry");
                     return "Please fill subject";
                   }
                 },
@@ -37,14 +38,14 @@ class AddlistSrceen extends State<AddSrceen> {
               RaisedButton(
                 child: Text('Save'),
                 onPressed: () async {
-                  _formkey.currentState.validate();
-                  if (subjectTodo.text.length > 0) {
+                  _formKey.currentState.validate();
+                  if (TitleTodo.text.length > 0) {
                     await db.open("todo.db");
-                    Todo todo = Todo();
-                    todo.subject = subjectTodo.text;
-                    todo.done = false;
-                    await db.insert(todo);
-                    print(todo);
+                    Todo _todo = Todo();
+                    _todo.title = TitleTodo.text;
+                    _todo.done = false;
+                    await db.insert(_todo);
+                    print('Save data in todo');
                     Navigator.pop(context, true);
                   }
                 },
